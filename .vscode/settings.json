@@ -1,0 +1,53 @@
+{
+    //ここから下がtexの設定
+    "latex-workshop.latex.tools": [
+        {
+            "name": "latexmk (uplatex)",
+            "command": "latexmk",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-pdfdvi",
+                "%DOC%"
+            ]
+        },
+    ],
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "latexmk (uplatex)",
+            "tools": [
+                "latexmk (uplatex)",
+            ]
+        },
+    ],
+    "latex-workshop.view.pdf.viewer": "tab",
+    // 使用パッケージのコマンドや環境の補完を有効にする
+    "latex-workshop.intellisense.package.enabled": true,
+    // 数式のプレビュー
+    "latex-workshop.hover.preview.enabled": true,
+    "latex-workshop.formatting.latex": "latexindent",
+    "[tex]": {
+        "editor.defaultFormatter": "James-Yu.latex-workshop",
+        "editor.suggest.snippetsPreventQuickSuggestions": false,
+        "editor.tabSize": 2
+    },
+    "[latex]": {
+        "editor.defaultFormatter": "James-Yu.latex-workshop",
+        "editor.suggest.snippetsPreventQuickSuggestions": false,
+        "editor.tabSize": 2
+    },
+    "[bibtex]": {
+        "editor.defaultFormatter": "James-Yu.latex-workshop",
+        "editor.suggest.snippetsPreventQuickSuggestions": false,
+        "editor.tabSize": 2
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/*.aux": true,
+        "**/*.synctex.gz": true,
+        "**/*.log": true,
+        "**/*.blg": true,
+    },
+}
