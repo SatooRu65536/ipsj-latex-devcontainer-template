@@ -1,8 +1,9 @@
 \begin{thebibliography}{1}
 
 \bibitem{sample}
-{著者名}.
-\newblock タイトル.
+{佐藤 智}.
+\newblock Devcontainer環境の情報処理学会全国大会用テンプレート.
 \newblock 12 2026.
+\newblock \url{https://github.com/SatooRu65536/ipsj-latex-devcontainer-template}.
 
 \end{thebibliography}
