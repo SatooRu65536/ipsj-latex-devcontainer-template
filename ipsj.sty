@@ -1,14 +1,18 @@
-\geometry{a4paper, noheadfoot}
+\usepackage{lmodern}
+\linespread{0.8}
+
+\geometry{noheadfoot, left=20mm, right=20mm}
 
 \setlength{\columnsep}{7mm}
 
-\renewcommand\footnoterule{%
-  \vspace{5pt}
-  \hrule width \linewidth height 0.6pt
-  \vspace{5pt}
+\renewcommand\footnoterule{
+  \kern-4\p@ % 罫線上のスペース
+  \hrule width \columnwidth % 罫線の長さは本文幅
+  \kern 1.6\p@ % 罫線下のスペース
 }
 
 \pagestyle{empty}
+
 
 \def\title#1#2{%
   \def\@titleJa{#1}
@@ -16,7 +20,7 @@
 }
 
 \newcount\author@count
-\advance\author@count\@ne
+\author@count=1
 
 \def\author#1#2#3{%
   \advance\author@count\@ne
@@ -54,5 +58,6 @@
   \vskip2\Cvs
   % \ifvoid\@abstractbox\else\centerline{\box\@abstractbox}\vskip1.5em\fi
 }
+
 \def\xx@mktbl@app#1{\edef\xx@tmp{#1}\toks\tw@\expandafter{\xx@tmp}%
   \toks@\expandafter{\xx@tl}\edef\xx@tl{\the\toks@\the\toks\tw@}}
