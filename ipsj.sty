@@ -1,7 +1,7 @@
 \usepackage{lmodern}
 \linespread{0.8}
 
-\geometry{noheadfoot, left=20mm, right=20mm}
+\geometry{noheadfoot, left=20mm, right=20mm, top=30mm, bottom=20mm}
 
 \setlength{\columnsep}{7mm}
 
@@ -20,43 +20,100 @@
 }
 
 \newcount\author@count
-\author@count=1
+\author@count=0
 
-\def\author#1#2#3{%
-  \advance\author@count\@ne
-  \expandafter\def\csname authorAffiliate\the\author@count\endcsname{#1}
-  \expandafter\def\csname authorName\the\author@count\endcsname{#2}
-  \expandafter\def\csname authorEn\the\author@count\endcsname{#3}
+\newcount\affil@count
+\affil@count=0
+
+% \affiliation{番号}{日本語所属}{英語所属}
+\def\affiliation#1#2#3{%
+  \expandafter\gdef\csname affilJa@#1\endcsname{#2}
+  \expandafter\gdef\csname affilEn@#1\endcsname{#3}
+  \expandafter\gdef\csname affilAuthorsEn@#1\endcsname{}
+  \ifnum#1>\affil@count \global\affil@count=#1\relax\fi
 }
+
+% \author{所属番号}{日本語名}{英語名}
+\def\author#1#2#3{%
+  \global\advance\author@count\@ne
+  \expandafter\gdef\csname authorAffilNum\the\author@count\endcsname{#1}
+  \expandafter\gdef\csname authorName\the\author@count\endcsname{#2}
+  \expandafter\gdef\csname authorEn\the\author@count\endcsname{#3}
+  % 所属ごとの著者英語名リストに追加
+  \ipsj@add@author@to@affil{#1}{#3}
+}
+
+% 所属に著者を追加
+\def\ipsj@add@author@to@affil#1#2{%
+  \expandafter\ifx\csname affilAuthorsEn@#1\endcsname\empty
+    \expandafter\gdef\csname affilAuthorsEn@#1\endcsname{#2}%
+  \else
+    \expandafter\g@addto@macro\csname affilAuthorsEn@#1\endcsname{, #2}%
+  \fi
+}
+
+% ダガー記号の定義
+\def\ipsj@dagger#1{%
+  \ifcase#1\or\dag\or\ddag\or\S\or\P\or{**}\or{\dag\dag}\or{\ddag\ddag}\fi
+}
+
+% カウンター用
+\newcount\ipsj@loop@count
 
 % title style
 \def\@maketitle{
   \newpage\null
   \begin{center}
     % output title
-    \setcounter{footnote}{-1}  % no footnote symbol
-    {\fontsize{17.28pt}{0truept}\selectfont \@titleJa\thanks{\small \@titleEn}}
+    \setcounter{footnote}{-1}
+    {\fontsize{17.28pt}{0truept}\selectfont \@titleJa\thanks{\small\raggedright \@titleEn\\
+      \ipsj@make@en@footnote{1}%
+      \ifnum\affil@count>1 \ipsj@make@en@footnote{2}\fi
+      \ifnum\affil@count>2 \ipsj@make@en@footnote{3}\fi
+      \ifnum\affil@count>3 \ipsj@make@en@footnote{4}\fi
+    }}
     {\fontsize{10.95pt}{0truept}\selectfont
       \begin{center}
-        % output authors
-        \setcounter{footnote}{1}  % start footnote symbol: dagger
+        \vspace{5pt}
+        % output authors inline with affiliation symbols
         {
-          \advance\author@count\@ne
-          \count@\tw@
-          \@whilenum{\count@<\author@count}\do{
-            \edef\xx@tl{\noexpand\begin{tabular}{c}\noexpand}
-                \xx@mktbl@app{\noexpand\vspace{5pt}\csname authorName\the\count@\endcsname\noexpand\thanks{\noexpand\fontsize{9truept}{0truept}\noexpand\selectfont\csname authorEn\the\count@\endcsname}
-                  \noexpand\\}
-                \xx@mktbl@app{\noexpand\vspace{5pt}\csname authorAffiliate\the\count@\endcsname\noexpand\footnotemark[\count@]\noexpand\\}
-                \xx@mktbl@app{\noexpand\end{tabular}}\xx@tl
-            \advance\count@\@ne
+          \ipsj@loop@count=\@ne
+          \global\advance\author@count\@ne
+          \@whilenum{\ipsj@loop@count<\author@count}\do{
+            \csname authorName\the\ipsj@loop@count\endcsname\textsuperscript{\ipsj@dagger{\csname authorAffilNum\the\ipsj@loop@count\endcsname}}%
+            \advance\ipsj@loop@count\@ne
+            \ifnum\ipsj@loop@count<\author@count
+              \hspace{1.5em}%
+            \fi
           }
+          \global\advance\author@count\m@ne
+        }
+        % output affiliations below authors
+        \par\vspace{8pt}
+        {
+          \ipsj@print@affiliations
         }
       \end{center}
     }
   \end{center}
   \vskip2\Cvs
-  % \ifvoid\@abstractbox\else\centerline{\box\@abstractbox}\vskip1.5em\fi
+}
+
+% 英語脚注1行を生成
+\def\ipsj@make@en@footnote#1{%
+  \textsuperscript{\ipsj@dagger{#1}}\space\csname affilAuthorsEn@#1\endcsname, \csname affilEn@#1\endcsname\\
+}
+
+% 日本語所属を出力
+\def\ipsj@print@affiliations{%
+  \ipsj@loop@count=\@ne
+  \@whilenum{\ipsj@loop@count<\numexpr\affil@count+1\relax}\do{
+    \textsuperscript{\ipsj@dagger{\ipsj@loop@count}}\,\csname affilJa@\the\ipsj@loop@count\endcsname
+    \advance\ipsj@loop@count\@ne
+    \ifnum\ipsj@loop@count<\numexpr\affil@count+1\relax
+      \hspace{1.5em}%
+    \fi
+  }
 }
 
 \def\xx@mktbl@app#1{\edef\xx@tmp{#1}\toks\tw@\expandafter{\xx@tmp}%
